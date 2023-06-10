@@ -1,0 +1,44 @@
+<!doctype html>
+<html>
+  <head>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+    <title>
+      Bleve index demo
+    </title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" href="style.css">
+  </head>
+  <body>
+
+    <div class="bg-blue-500 py-4">
+      <h1 class="text-white text-2xl text-center">Document Search Demo using Bleve</h1>
+    </div>
+
+    <div class="mx-4 my-2">
+      <div class="flex items-center border border-gray-300 rounded-md px-3 py-2">
+        <input type="text" class="flex-1 px-2 py-1 focus:outline-none" placeholder="Search...">
+        <button id="searchButton" class="ml-2 px-4 py-2 bg-blue-500 text-white rounded-md hover:bg-blue-600">
+          <i class="fa fa-search"></i>
+        </button>
+      </div>
+
+      <ul id="searchResultsContainer" class="hidden">
+      </ul>
+    </div>
+
+    <script>
+      const searchButton = document.getElementById("searchButton");
+      const searchResults = document.getElementById("searchResultsContainer");
+
+      searchButton.addEventListener("click", () => {
+              for (let i = 1; i <= 500; i++) {
+                      const listItem = document.createElement("li");
+                      listItem.textContent = "Item " + i;
+                      searchResults.appendChild(listItem);
+                    }
+              searchResults.classList.toggle("hidden");
+            });
+
+    </script>
+  </body>
+</html>
