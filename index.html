@@ -11,32 +11,74 @@
   <body>
 
     <div class="bg-blue-500 py-4">
-      <h1 class="text-white text-2xl text-center">Document Search Demo using Bleve</h1>
+      <h1 class="text-white text-2xl text-center">Document Search Demo using Harry Potter books</h1>
     </div>
 
-    <div class="mx-4 my-2">
-      <div class="flex items-center border border-gray-300 rounded-md px-3 py-2">
-        <input type="text" class="flex-1 px-2 py-1 focus:outline-none" placeholder="Search...">
+    <div class="mx-4 my-4">
+      <div class="flex items-center border border-gray-200 rounded-md px-2 py-2">
+        <input id="searchBox" type="text" class="flex-1 px-2 py-2 focus:outline-none" placeholder="Search...">
         <button id="searchButton" class="ml-2 px-4 py-2 bg-blue-500 text-white rounded-md hover:bg-blue-600">
           <i class="fa fa-search"></i>
         </button>
       </div>
 
-      <ul id="searchResultsContainer" class="hidden">
-      </ul>
+      <ul id="searchResultsContainer"></ul>
     </div>
 
     <script>
       const searchButton = document.getElementById("searchButton");
       const searchResults = document.getElementById("searchResultsContainer");
+      const searchInput = document.getElementById("searchBox");
+
+      searchInput.addEventListener("keypress", function(event) {
+              if (event.key === "Enter") {
+                      event.preventDefault(); // Prevent form submission
+                      searchButton.click(); // Simulate button click
+                    }
+            });
 
       searchButton.addEventListener("click", () => {
-              for (let i = 1; i <= 500; i++) {
-                      const listItem = document.createElement("li");
-                      listItem.textContent = "Item " + i;
-                      searchResults.appendChild(listItem);
-                    }
-              searchResults.classList.toggle("hidden");
+              searchResults.innerHTML = "";
+              const searchTerm = searchInput.value.trim();
+
+              const index = "hpotter.bleve";
+              const url = `http://localhost:8095/search?i=${index}&q=${searchTerm}`;
+              console.log(url)
+              fetch(url, {
+                      method: 'GET',
+                      headers: {
+                              'Content-Type': 'application/json',
+                            },
+                      // body: JSON.stringify({ q: searchTerm }),
+                    })
+                .then(response => response.json())
+                .then(data => {
+                        // search hits and speed
+                        const result = data.SearchStat;
+                        const listItem = document.createElement("li");
+                        listItem.style.fontSize = "14px";
+                        listItem.style.color = "grey";
+                        listItem.textContent = result;
+                        searchResults.appendChild(listItem);
+
+                        for (let i = 0; i < data.Hits.length; i++) {
+                                const listItemName = document.createElement("li");
+                                listItemName.style.fontWeight = 600;
+                                listItemName.textContent = data.Hits[i].Name;
+                                searchResults.appendChild(listItemName);
+
+                                const listItem = document.createElement("li");
+                                const listItemLine = document.createElement("span");
+                                listItemLine.style.marginLeft = "40px";
+                                listItemLine.innerHTML = data.Hits[i].Line;
+                                listItem.appendChild(listItemLine);
+                                searchResults.appendChild(listItem);
+                              }
+                      })
+                .catch(error => {
+                        // Handle any errors
+                        console.error('Error:', error);
+                      });
             });
 
     </script>
